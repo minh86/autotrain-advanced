@@ -317,6 +317,9 @@ class ObjectDetectionPreprocessor:
             )
 
             all_categories = train_categories.union(valid_categories)
+            
+            # Allowing -1 to mean no label.
+            all_categories.add(-1)
 
             features = Features(
                 {
