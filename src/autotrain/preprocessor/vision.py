@@ -246,7 +246,7 @@ class ObjectDetectionPreprocessor:
         metadata = metadata[["file_name", "objects"]]
         # inside metadata objects column, values should be bbox, area and category
         # if area does not exist, it should be created by multiplying bbox width and height
-        categories = []
+        categories = [-1]
         for _, row in metadata.iterrows():
             obj = row["objects"]
             if "bbox" not in obj or "category" not in obj:
@@ -319,7 +319,7 @@ class ObjectDetectionPreprocessor:
             all_categories = train_categories.union(valid_categories)
             
             # Allowing -1 to mean no label.
-            all_categories.add(-1)
+            # all_categories.add(-1)
 
             features = Features(
                 {
