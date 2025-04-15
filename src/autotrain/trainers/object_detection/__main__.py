@@ -1,6 +1,7 @@
 import argparse
 import json
 from functools import partial
+import os
 
 from accelerate.state import PartialState
 from datasets import load_dataset, load_from_disk
@@ -28,7 +29,7 @@ from autotrain.trainers.common import (
 )
 from autotrain.trainers.object_detection import utils
 from autotrain.trainers.object_detection.params import ObjectDetectionParams
-
+from autotrain.trainers.object_detection.datasetloader import LocalCocoDatasetLoader
 
 def parse_args():
     # get training_config.json from the end user
@@ -43,8 +44,14 @@ def train(config):
         config = ObjectDetectionParams(**config)
 
     valid_data = None
-    if config.data_path == f"{config.project_name}/autotrain-data":
-        train_data = load_from_disk(config.data_path)[config.train_split]
+    # TODO: add more format, auto detect format, add support for AAP
+    # TODO: should load in batch not everything
+    # Load local dataset in COCO format
+    if os.path.isdir(config.data_path):
+        loader = LocalCocoDatasetLoader(config.data_path, val_dir=config.valid_split)
+        train_data = loader["train"]
+        valid_data = loader["validation"]
+
     else:
         if ":" in config.train_split:
             dataset_config_name, split = config.train_split.split(":")
@@ -64,8 +71,8 @@ def train(config):
             )
 
     if config.valid_split is not None:
-        if config.data_path == f"{config.project_name}/autotrain-data":
-            valid_data = load_from_disk(config.data_path)[config.valid_split]
+        if os.path.isdir(config.data_path):
+            valid_data = loader["validation"]
         else:
             if ":" in config.valid_split:
                 dataset_config_name, split = config.valid_split.split(":")

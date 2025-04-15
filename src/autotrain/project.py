@@ -288,24 +288,8 @@ def img_clf_munge_data(params, local):
 
 
 def img_obj_detect_munge_data(params, local):
-    train_data_path = f"{params.data_path}/{params.train_split}"
-    if params.valid_split is not None:
-        valid_data_path = f"{params.data_path}/{params.valid_split}"
-    else:
-        valid_data_path = None
-    if os.path.isdir(train_data_path):
-        dset = AutoTrainObjectDetectionDataset(
-            train_data=train_data_path,
-            valid_data=valid_data_path,
-            token=params.token,
-            project_name=params.project_name,
-            username=params.username,
-            local=local,
-        )
-        params.data_path = dset.prepare()
-        params.valid_split = "validation"
-        params.image_column = "autotrain_image"
-        params.objects_column = "autotrain_objects"
+    # Remove creating dataset in cache
+    # TODO: should remove for all other tasks
     return params
 
 

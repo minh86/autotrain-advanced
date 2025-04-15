@@ -1,7 +1,12 @@
 # Local stuff
 .DS_Store
 .vscode/
+.idea/
 test/
+src/autotrain/tests/
+src/dataset
+src/mlruns
+src/test
 test.py
 output/
 output2/
